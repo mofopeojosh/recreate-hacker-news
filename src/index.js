@@ -2,6 +2,29 @@ const moment = require('moment');
 import {HackerNews} from "graphqlhub-schemas";
 import {GraphQLSchema, graphql} from "graphql";
 
+document.getElementById("topStories").innerHTML = `<h2 style="text-align: center;">Loading...</h2>`
+
+let schema = new GraphQLSchema({
+    query: HackerNews.QueryObjectType
+});
+
+let query = `{
+    topStories(limit: 30) {
+      id, url, title, score, time, timeISO, descendants by{
+          id  
+        },
+      }
+  }`;
+
+graphql(schema, query)
+    .then(res => {
+        console.log('worked', res)
+        displayTopStories(res.data.topStories);
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
 const displayTopStories = (topStories) => {
     let content = '';
 
@@ -44,26 +67,4 @@ const displayTopStories = (topStories) => {
 const getMinutes = (timeISO) => {
     return moment(timeISO).fromNow();
 };
-
-let schema = new GraphQLSchema({
-    query: HackerNews.QueryObjectType
-});
-
-let query = `{
-    topStories(limit: 30) {
-      id, url, title, score, time, timeISO, descendants by{
-          id  
-        },
-      }
-  }`;
-
-graphql(schema, query)
-    .then(res => {
-        console.log('worked', res)
-        displayTopStories(res.data.topStories);
-    })
-    .catch(err => {
-        console.log(err);
-    });
-
 
