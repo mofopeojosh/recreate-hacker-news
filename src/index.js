@@ -1,5 +1,4 @@
 const moment = require('moment');
-import "./styles.css";
 import {HackerNews} from "graphqlhub-schemas";
 import {GraphQLSchema, graphql} from "graphql";
 
