@@ -97,6 +97,7 @@ a {
   grid-template-rows: 100% auto;
   grid-template-columns: 35px auto;
   column-gap: 4px;
+  padding-right: 4px;
   margin: 4px 0;
 }
 
