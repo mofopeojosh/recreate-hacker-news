@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "graphql": "14.3.1",
-    "graphqlhub-schemas": "0.1.0"
+    "graphqlhub-schemas": "0.1.0",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@babel/core": "7.2.0",
