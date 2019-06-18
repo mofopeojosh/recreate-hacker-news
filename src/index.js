@@ -1,49 +1,70 @@
+const moment = require('moment');
 import "./styles.css";
-import { HackerNews } from "graphqlhub-schemas";
-import { GraphQLSchema, graphql } from "graphql";
+import {HackerNews} from "graphqlhub-schemas";
+import {GraphQLSchema, graphql} from "graphql";
 
-document.getElementById("app").innerHTML = [1, 2, 3].map(item => {
-  return `
-    <div class="news-item">
-      <span class="news-item-index">
-        1.<span class="news-item-caret"></span>
-      </span>
-      <div class="news-item-body">
-        <p class="news-item-headline">
-          Mazda is purging touchscreens from something.
-          <span class="news-item-ref">
-            (<a href="#">motorauthority</a>)</span
-          >
-        </p>
-        <div class="news-item-details">
-          39 points by headalgorithm 48 minutes ago | hide | 20 comments
-        </div>
-      </div>
-    </div>
-`;
-});
+const displayTopStories = (topStories) => {
+    let content = '';
+
+    const moreContent = `<div class="news-item">
+            <div class="news-item-body news-item-more">
+                <a href="#">More</a>
+            </div>
+        </div>`;
+
+    topStories.forEach((story, index) => {
+        content += `
+            <div class="news-item">
+             
+              <div class="news-item-index">
+                <span class="news-item-no">${index + 1}.</span> 
+                <span class="news-item-caret"></span>
+              </div>
+              
+              <div class="news-item-body">
+                
+                <p class="news-item-headline">
+                  <a href="${story.url}">${story.title}</a>
+                  <span class="news-item-ref">
+                    (<a href="#">motorauthority</a>)
+                    </span>
+                </p>
+               
+                <div class="news-item-details">
+                  ${story.score} points by ${story.by.id} ${getMinutes(story.timeISO)} | hide | ${story.descendants} comments
+                </div>
+              </div>
+            </div>`;
+
+
+    });
+    document.getElementById("topStories").innerHTML = content + moreContent
+
+};
+
+const getMinutes = (timeISO) => {
+    return moment(timeISO).fromNow();
+};
 
 let schema = new GraphQLSchema({
-  query: HackerNews.QueryObjectType
+    query: HackerNews.QueryObjectType
 });
 
 let query = `{
-  hn {
-    topStories {
-      id, url, title, score, time, timeISO, by{
+    topStories(limit: 30) {
+      id, url, title, score, time, timeISO, descendants by{
           id  
         },
-        kids {
-          id
-        },
       }
-    }
   }`;
 
 graphql(schema, query)
-  .then(res => {
-    res.json();
-  })
-  .catch(err => {
-    console.log(err);
-  });
+    .then(res => {
+        console.log('worked', res)
+        displayTopStories(res.data.topStories);
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+
